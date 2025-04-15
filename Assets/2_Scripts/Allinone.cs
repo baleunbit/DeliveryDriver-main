@@ -31,7 +31,6 @@ public class Allinone : MonoBehaviour
     [SerializeField] Color fastColor = Color.red;
     [SerializeField] Color slowColor = Color.blue;
 
-
     Rigidbody2D rb;
     AudioSource audioSource;
     SpriteRenderer spriteRenderer;
@@ -43,6 +42,7 @@ public class Allinone : MonoBehaviour
     float previousSpeed = 0;
     bool hasItem = false;
     bool canLogSpeedChange = true;
+    bool wasCollision = false;
     int score = 0;
 
     void Start()
@@ -81,11 +81,20 @@ public class Allinone : MonoBehaviour
 
         float currentSpeed = rb.linearVelocity.magnitude;
 
-        if (canLogSpeedChange)
+        if (canLogSpeedChange && currentSpeed > 0.2f)
         {
             if (currentSpeed < previousSpeed - 0.1f)
             {
-                Debug.Log("속도 감소");
+                if (wasCollision)
+                {
+                    Debug.Log("충돌로 인한 속도 감소");
+                    wasCollision = false;
+                }
+                else
+                {
+                    Debug.Log("속도 감소");
+                }
+
                 canLogSpeedChange = false;
                 Invoke("EnableSpeedLog", 1);
             }
@@ -99,7 +108,8 @@ public class Allinone : MonoBehaviour
 
         previousSpeed = currentSpeed;
 
-        if (currentSpeed > 40)
+        // 색상 처리 (상태 기반)
+        if (currentState == CarState.Boosting)
             spriteRenderer.color = fastColor;
         else if (currentSpeed < 5)
             spriteRenderer.color = slowColor;
@@ -161,16 +171,14 @@ public class Allinone : MonoBehaviour
 
             currentState = CarState.Carrying;
 
-            // 새 방식: 물건에게 스스로 사라지게 요청
             PickupItem item = other.GetComponent<PickupItem>();
             if (item != null)
             {
-                item.OnPickup(0.1f); // 또는 0f 즉시 제거
+                item.OnPickup(0.1f);
             }
 
             Debug.Log("치킨 픽업됨");
         }
-
 
         if (other.CompareTag("Customer") && hasItem)
         {
@@ -190,6 +198,7 @@ public class Allinone : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         acceleration = slowAcceleration;
+        wasCollision = true;
         Invoke("ResetAcceleration", 2);
     }
 

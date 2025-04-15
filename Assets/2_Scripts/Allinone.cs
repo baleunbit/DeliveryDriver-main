@@ -42,7 +42,7 @@ public class Allinone : MonoBehaviour
     float previousSpeed = 0;
     bool hasItem = false;
     bool canLogSpeedChange = true;
-    bool wasCollision = false;
+    bool justCollided = false;
     int score = 0;
 
     void Start()
@@ -81,26 +81,18 @@ public class Allinone : MonoBehaviour
 
         float currentSpeed = rb.linearVelocity.magnitude;
 
-        if (canLogSpeedChange && currentSpeed > 0.2f)
+        if (canLogSpeedChange)
         {
-            if (currentSpeed < previousSpeed - 0.1f)
+            if (justCollided)
             {
-                if (wasCollision)
-                {
-                    Debug.Log("충돌로 인한 속도 감소");
-                    wasCollision = false;
-                }
-                else
-                {
-                    Debug.Log("속도 감소");
-                }
-
+                Debug.Log("속도 감소 (충돌)");
+                justCollided = false;
                 canLogSpeedChange = false;
                 Invoke("EnableSpeedLog", 1);
             }
-            else if (currentSpeed > previousSpeed + 0.1f)
+            else if (currentSpeed < previousSpeed - 0.1f)
             {
-                Debug.Log("속도 증가");
+                Debug.Log("속도 감소 (자연)");
                 canLogSpeedChange = false;
                 Invoke("EnableSpeedLog", 1);
             }
@@ -108,7 +100,7 @@ public class Allinone : MonoBehaviour
 
         previousSpeed = currentSpeed;
 
-        // 색상 처리 (상태 기반)
+        // 색상: 부스트 상태일 때만 빨간색
         if (currentState == CarState.Boosting)
             spriteRenderer.color = fastColor;
         else if (currentSpeed < 5)
@@ -137,7 +129,7 @@ public class Allinone : MonoBehaviour
         {
             if (audioSource.isPlaying) audioSource.Stop();
             if (smokeLeft.isPlaying) smokeLeft.Stop();
-            if (!smokeRight.isPlaying) smokeRight.Stop();
+            if (smokeRight.isPlaying) smokeRight.Stop();
         }
 
         LeftTrail.emitting = isDrifting;
@@ -156,8 +148,7 @@ public class Allinone : MonoBehaviour
                 spriteRenderer.sprite = boostSprite;
 
             currentState = CarState.Boosting;
-            Debug.Log("부스트 시작!");
-            // 클래스 멤버 EndBoost 메서드를 Invoke를 통해 호출
+            Debug.Log("부스트 시작! (속도 증가)");
             Invoke("EndBoost", 2);
         }
 
@@ -199,7 +190,7 @@ public class Allinone : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         acceleration = slowAcceleration;
-        wasCollision = true;
+        justCollided = true;
         Invoke("ResetAcceleration", 2);
     }
 
@@ -208,8 +199,7 @@ public class Allinone : MonoBehaviour
         acceleration = defaultAcceleration;
     }
 
-    // EndBoost는 이제 클래스 멤버로서 정의되어 있음
-    private void EndBoost()
+    void EndBoost()
     {
         acceleration = defaultAcceleration;
 

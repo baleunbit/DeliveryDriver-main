@@ -70,3 +70,63 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Rider
+.idea/
+
+# VS
+.vscode/
+*.csproj
+*.sln
+*.suo
+*.user
+*.unityproj
+*.pidb
+*.booproj
+
+# ========== Unity 기본 무시 항목 ==========
+MemoryCaptures/
+UserSettings/
+Assets/AssetStoreTools*
+
+# ========== Unity Cache 및 패키지 관련 ==========
+Packages/packages-lock.json
+ProjectSettings/EditorBuildSettings.asset
+ProjectSettings/EditorSettings.asset
+
+# ========== 운영체제 무시 파일 ==========
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ========== Visual Studio ==========
+.vscode/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+
+# ========== Rider ==========
+.idea/
+*.sln.iml
+
+# ========== 기타 ==========
+*.bak
+*.orig
+*.swp
+
+# ========== Git 자체 무시 ==========
+.gitignore
+.gitattributes
+

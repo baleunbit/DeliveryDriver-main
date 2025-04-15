@@ -147,6 +147,7 @@ public class Allinone : MonoBehaviour
 
             currentState = CarState.Boosting;
             Debug.Log("부스트 시작!");
+            // 클래스 멤버 EndBoost 메서드를 Invoke를 통해 호출
             Invoke("EndBoost", 2);
         }
 
@@ -170,7 +171,6 @@ public class Allinone : MonoBehaviour
 
             Debug.Log("치킨 픽업됨");
         }
-
 
         if (other.CompareTag("Customer") && hasItem)
         {
@@ -198,7 +198,8 @@ public class Allinone : MonoBehaviour
         acceleration = defaultAcceleration;
     }
 
-    void EndBoost()
+    // EndBoost는 이제 클래스 멤버로서 정의되어 있음
+    private void EndBoost()
     {
         acceleration = defaultAcceleration;
 
